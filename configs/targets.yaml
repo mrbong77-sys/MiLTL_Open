@@ -1,0 +1,68 @@
+# Pass gates — machine-readable targets that the evaluation harness asserts verbatim (docs/BENCHMARK.md)
+# Rules:
+#   - Every gate is judged on the bootstrap 95% CI LOWER bound (never a point estimate alone).
+#   - precision/cost are evaluated after converting to deployment_prevalence (never the test-set class ratio).
+#   - Threshold τ is fixed on validation by maximizing recall under the FPR budget; no re-tuning on test.
+
+meta:
+  judged_on: ci_lower_95           # gate judgment criterion
+  bootstrap_resample: call          # resampling at the call level
+  threshold_selection: max_recall_s.t._fpr_budget   # PEINN ee_threshold_finder convention
+  test_set: fss_real_holdout        # FSS real voice = test only
+
+deployment_prevalence: [0.001, 0.01, 0.05]   # for precision/cost conversion (0.1% / 1% / 5%)
+
+cost_model:                          # for A5 expected-cost operating-point selection (product team to finalize)
+  c_fn: TBD                          # cost of a missed phishing call (financial/credit damage)
+  c_fp: TBD                          # cost of a false alarm (trust/churn)
+
+edge_target:                         # D hard constraints — measured calibration once the target SoC is fixed
+  soc: TBD                           # e.g. Jetson Orin Nano / mobile NPU
+  rtf_max: { v0: 1.0, v1: 0.7, v2: 0.5 }     # < 1 required
+  added_latency_ms_p95: { v1: 300, v2: 200 } # per segment
+  peak_ram_mb: TBD
+  model_size_mb_int8: TBD
+  energy_mwh_per_min: TBD
+
+gates:
+  # A. Low-false-positive detection ----------------------------------------------------------
+  A1_recall_at_fpr_1pct:   { v0: 0.80, v1: 0.90, v2: 0.93 }
+  A1_recall_at_fpr_0_1pct: {           v1: 0.75, v2: 0.85 }
+  A2_pauc_0_1pct_norm:     { v0: 0.75, v1: 0.85, v2: 0.90 }
+  A4_normal_calls_per_false_alarm: { v0: 100, v1: 200, v2: 500 }   # = nuisance rate, higher is better
+
+  # B. Early detection --------------------------------------------------------------
+  B1_tta_p90_seconds:      { v0: 30, v1: 20, v2: 15 }              # lower is better
+  B2_pre_harm_intercept:   { v0: 0.70, v1: 0.85, v2: 0.92 }
+
+  # C. 3-way routing utility -----------------------------------------------------
+  C2_i_routing_fp_reduction_at_equal_recall: { v1: 0.30, v2: 0.40 }
+  C4_abstain_budget_max:   { v0: 0.20, v1: 0.15, v2: 0.15 }       # upper bound on the I-routing ratio
+
+  # Calibration -------------------------------------------------------------
+  calibration_ece_max:     { v0: 0.05, v1: 0.03, v2: 0.02 }       # lower is better
+
+  # D. Edge (tied to edge_target) --------------------------------------------
+  D5_quant_recall_drop_max_pp: { v1: 2.0, v2: 1.0 }               # lower is better
+
+  # E. Generalization / robustness (docs/BENCHMARK.md Δ matrix & axes = headline) ----------------------
+  E1_synth_to_real_recall_drop_max_pp: { v1: 15.0, v2: 8.0 }      # lower is better
+  E4_split_leakage: { all: 0 }                                    # zero speaker/source leakage incidents required
+  # E2–E6: domain & lexical-shortcut robustness. KorCCViD in-dist perfection is a lexical shortcut (BoW held-out 1.000, docs/BASELINES.md)
+  # → judge on the **Δ/shift axes** below instead of in-dist. MiLTL hypothesis: minimal Δ vs the lexical baseline.
+  E2_xcorpus_auroc_maxdelta_max:     { v1: 0.15, v2: 0.08 }       # T1 cross-corpus maxΔ(AUROC) upper bound (lower is better)
+  E3_hardneg_precision_min:          { v1: 0.85, v2: 0.92 }       # T2 domain-matched normal-call precision (false-alarm prevention)
+  E5_adversarial_recall_drop_max_pp: { v1: 20.0, v2: 10.0 }       # T3 upper bound on recall drop under paraphrase / keyword removal
+  E6_length_control_auroc_min:       { v1: 0.75, v2: 0.85 }       # T5 fixed-window (length-controlled) AUROC lower bound
+
+# External certified/standard benchmark anchors (comparison references — not gates; SNU-ITRC KPI framework, certified-test citations)
+external_benchmarks:
+  text_intent_panc_micro_f1:   { sota: 0.983, src: "SNU-ITRC KPI08(KTR 공인), PANC/PAN-12 eSPD 조기검출" }
+  deepvoice_asvspoof_eer_pct:  { sota: 0.21,  src: "SNU-ITRC KPI07(한국시험인증원), ASVspoof2019, XLS-R+one-class+전화채널증강" }
+  speaker_voxceleb1_eer_pct:   { sota: 0.68,  src: "SNU-ITRC KPI06, VoxCeleb1" }
+  korccvi_lexical_ceiling:     { note: "BoW held-out AUROC/F1=1.000 → in-dist 무의미(docs/19). E2–E6 Δ로 판정." }
+
+commercial_ga_requires:              # "commercially deployable" verdict = all V2 gates + hard constraints
+  - all V2 gates pass at ci_lower_95
+  - edge_target hard constraints met on real SoC
+  - evaluated at field-pilot deployment_prevalence

@@ -1,0 +1,141 @@
+# Nibble pattern-recognition core config (docs/ARCHITECTURE.md)
+# Principles:
+#   - MiLTL is a NEW architecture that does not inherit v2.1 routing. Each T/I/F/E channel is extracted independently → 4-bit nibble.
+#   - The thresholds below are CALIBRATION outputs, not fixed constants. Starting from the seed values, they are
+#     refit on validation by maximizing recall under the FPR budget (configs/targets.yaml convention). No re-tuning on test.
+
+version: 0.1
+arch: miltl_nibble_v0        # not inherited from v2.1 (new architecture)
+
+# --- nibble bit layout (MSB→LSB) : T I F E ------------------------------
+layout:
+  order: [T, I, F, E]        # value = 8*bT + 4*bI + 2*bF + 1*bE  ∈ {0..15}
+  bits_per_channel: 1        # default 4-bit nibble.
+
+# --- multimodal byte (docs/ARCHITECTURE.md) : 1 byte per segment --------------
+# Two symmetric paths (both T/I/F/E). byte = (text_nibble<<4) | wave_nibble.
+multimodal:
+  byte: "(text_nibble << 4) | wave_nibble"   # upper 4 = text (ASR→PEINN), lower 4 = acoustic (waveform→acoustic head)
+  modalities:
+    text:  { source: "ASR transcript → PEINN 텍스트 head", bits: [T, I, F, E] }
+    wave:  { source: "raw 파형 → 음향 head", bits: [T, I, F, E] }   # F_wave absorbs phishing-style prosody + synthetic voice
+  missing_modality: mask     # missing is not 0 → null + modality mask (handles text-only / voice-only)
+  thresholds:                # independent τ per modality (each decided by its own simulation; seed is thresholds.seed below)
+    text: from_simulation
+    wave: from_simulation
+
+# --- channel thresholds (SIMULATION outputs; the values below are only seed starting points) --------------------
+# The on/off threshold for each bit is pre-determined by scripts/simulate_thresholds.py (miltl/nibble/simulate.py).
+# The decision unit is a 1–2 min window pattern, not a single nibble → thresholds are chosen to maximize window separability (pAUC@FPR≤1%).
+#   source: simulation → runtime must ignore this seed and load the simulation-derived τ.
+#           seed       → use the seed as-is for smoke tests / cold start.
+thresholds:
+  source: simulation
+  policy: max_pAUC@fpr<=0.01            # maximize window separability (consistent with targets.yaml)
+  selection_split: validation           # fixed on validation, no re-tuning on test
+  log_diff_vs_seed: true                # log diff vs seed
+  # Direction suggested by synthetic simulation (pending re-confirmation with real PEINN): τ_F↓(≈0.25), τ_E↓(≈0.20), τ_C↑(≈0.40).
+  seed:                                 # v2.1 text operating point = REFERENCE ONLY
+    tau_T: 0.75                         # v2.1 DEFAULT_NEUTRO_THRESHOLDS[0] (τ_safe)
+    tau_F: 0.50                         # v2.1 DEFAULT_NEUTRO_THRESHOLDS[1] (τ_harm)
+    tau_I: 0.65                         # v2.1 DEFAULT_NEUTRO_THRESHOLDS[2] (τ_I)
+    tau_C: 0.30                         # v2.1 DEFAULT_TAU_C (C = min(T,F))
+    tau_E: null                         # E is the MiLTL prosody channel → new scale. No seed (derived from its own distribution).
+  # Recalibration on real data (scripts/calibrate_thresholds.py; FSS 60 vs AI-Hub 60, in-sample) — PEINN unchanged, thresholds only.
+  # The seed kills the low F/I/E distributions of conversational text (F/E nibble≈0) → classes not separated (combined call-AUC 0.69).
+  # Recalibration → E threshold 0.014 revives the channel (E call-AUC 0.53→0.96), combined call-AUC 0.69→0.97.
+  calibrated_v1:                        # ⚠️ small-sample and in-sample. To be re-confirmed on large held-out data.
+    tau_T: 0.906                        # weak per-segment (AUC 0.57), but 2-min accumulation gives call-AUC 0.77
+    tau_I: 0.063                        # reversed direction (benign↑) — downstream ML learns the sign
+    tau_F: 0.234                        # reversed direction (benign↑; phishing has low harmful-content F)
+    tau_E: 0.014                        # ★key channel — phishing threat-energy↑ (call-AUC 0.96)
+    tau_C: 0.30
+    use_conflict: false
+  # Distribution-derived (scripts/analyze_channel_distributions.py; Youden J = max balanced accuracy = class-conditional crossover point).
+  # ★Foundation (docs/ARCHITECTURE.md): segment distributions overlap ~90% (T/I/F balanced acc≈0.54, E≈0.63). Discriminative power
+  #  comes entirely from 2-min occupancy accumulation. Direction is explicit — I/F are pos_low (phishing is lower = polite, controlled).
+  # ★Unified re-foundation (docs/ARCHITECTURE.md): re-derived over 5 benign styles (read-speech kspon, emotion, spontaneous sample_voice/freetalk, chat aihub,
+  #  469 calls total). Per-group T_p50 0.889–0.906 = **text-channel distribution is style-invariant** → τ robust.
+  derived_v2:                           # validated: 5 styles pooled; derived τ unchanged vs single-benign derivation.
+    tau_T: 0.966                        # pos_high  overlap 0.90 segAUC 0.56 (segments nearly indistinguishable)
+    tau_I: 0.021                        # pos_low   overlap 0.91 (phishing I is low)
+    tau_F: 0.192                        # pos_low   overlap 0.89 (phishing F is low = polite; consistent with hard cases)
+    tau_E: 0.015                        # pos_high  overlap 0.92 segAUC 0.63 balanced acc 0.60 (★the only segment-level signal)
+    tau_C: 0.30
+    use_conflict: false
+  # Waveform-channel derived τ — ★telephone-band domain control completed (both sides matched to 300–3400Hz, artifacts/eval/channel_distribution_wave_tb.yaml):
+  #   uncontrolled: F segAUC 0.774 overlap 0.51 (looked like real separation) → controlled: F segAUC 0.637 overlap 0.75 (overlap nearly doubles = separation collapses).
+  #   After control no channel exceeds bal_acc 0.64 (T0.61·I0.59·F0.63·E0.63) = the same ~0.6 weak signal as text segments.
+  #   → Waveform F's segment separability is largely a bandwidth artifact. "Real prosody" claim withdrawn. Waveform value = operational complement (docs/ARCHITECTURE.md), not segAUC.
+  derived_wave_tb:                      # controlled version (telephone-band). Weak segment signal — discrimination only via 2-min accumulation.
+    tau_T: 0.516                        # pos_low  overlap 0.77 segAUC 0.371 (reversed, near-chance)
+    tau_I: 0.352                        # pos_high overlap 0.79 segAUC 0.601 (direction unstable)
+    tau_F: 0.450                        # pos_high overlap 0.75 segAUC 0.637 balanced acc 0.63 (weak signal after control)
+    tau_E: 0.450                        # pos_high overlap 0.66 segAUC 0.546 balanced acc 0.63
+  # E-channel normalization: do not assume v2.1 [0,10]. Standardize from the extractor's own distribution.
+  energy_norm: { method: zscore, ref: validation }
+
+# --- I bit: indeterminate = ignorance(I) OR contradiction(C=min(T,F)) --------------
+indeterminate:
+  use_conflict: true        # bI = 1[ I≥τ_I OR C=min(T,F)≥τ_C ]
+  log_conflict_raw: true    # log raw C as a side channel (recalibration, XAI)
+
+# --- segmentation (1 segment = 1 nibble) ------------------------------------------
+# How many seconds/words per nibble: reviewed on FSS data with scripts/analyze_segmentation.py.
+# Result (speech ≈1.78 words/sec, 35% of turns are ≤2 words): per-turn segmentation floods low-information
+# nibbles → a fixed 5–10s (≈9–18 words) sliding window is the sweet spot (12–24 nibbles per 2 min). Merge short pieces with neighbors.
+stream:
+  segment: fixed_window     # recommended: fixed time window (alternative: asr_turn — requires merging short turns)
+  segment_seconds: 8        # 1 nibble = 8 seconds (final). Tile the entire call with non-overlapping 8s windows (3 min → ~22 nibbles).
+  segment_words: 14         # tiling proxy for text corpora without audio (≈8s at 1.8 words/sec). For benign text.
+  min_syllables: 8          # merge pieces shorter than this into the adjacent segment (avoids low-information nibbles)
+  ring_pack_4bit: true      # 4-bit packed ring buffer (2 segments = 1 byte)
+
+# --- Gate-1 (first-stage window-pattern discrimination; not a single nibble) ------------------------
+gate1:
+  scorer: rule_logistic     # cold-start baseline (pure stdlib). Later replaced by gbdt / cnn1d / gru.
+  # Decision unit = nibble pattern accumulated over a 1–2 min window. window = number of segments (= window seconds / segment_seconds).
+  window: 15                # 15 segments × 8s ≈ 2 min. (8 ≈ 1 min). None = accumulate the whole call.
+  window_stride: 4          # sliding stride (in segments) ≈ 32s
+  # ⚠️ Values above are script-based estimates. To be finalized after re-measuring speech rate with real-audio ASR timestamps.
+  features:
+    - state_histogram        # normalized frequency of the 16 states
+    - f_persistence          # bF=1 ratio + max run-length
+    - e_persistence          # bE=1 ratio
+    - fe_cooccurrence        # bF∧bE ratio (simultaneous harm + pressure = strong signal)
+    - i_load                 # bI=1 ratio (triggers escalation)
+    - time_to_first_harm     # index of the first bF=1
+    - harm_ramp              # cumulative F slope
+    - transition_bigrams_topk
+
+# --- operational cascade (deployment path: 2min FIFO → threshold → MiniLM final → emergency actions) -----
+# miltl/nibble/operational.py OperationalCascade. Single threshold (not 3-band): MiniLM is the final arbiter.
+cascade:
+  buffer: fifo              # 2-min FIFO (deque maxlen=window). p1 < τ_alert → MONITORING (most calls)
+  window: 15               # 2min = 8s×15
+  tau_alert: 0.5           # crossing the threshold → call MiniLM for the final verdict. CALIBRATION target (most normal calls stay below).
+  min_context: 3           # warm-up: withhold judgment on the earliest segments (false-alarm suppression)
+  calibrate: true          # τ_alert: reset from normal-window quantiles (MiniLM false-call budget)
+
+# --- Gate-2 (MiniLM ≤2B, final arbiter) -------------------------------------
+gate2:
+  role: final_arbiter       # mandatory confirmation before high-risk actions (reporting etc.) — Gate-1 alone must never decide harm
+  max_params_b: 2.0         # ≤2B
+  input: [transcript_window, nibble_summary]
+  call_on: threshold_cross  # called only when p1 ≥ τ_alert
+  minimize_metric: escalation_rate   # first-class metric: minimize MiniLM call rate
+
+# --- emergency action layer (when MiniLM confirms harm) --------------------------------
+actions:
+  once_per_call: true
+  on_harm: [record_start, notify_guardian, report]   # start call recording, notify guardian, report (wired to real systems at deployment)
+
+# --- metrics (judged together with the targets.yaml gates) ---------------------------
+metrics:
+  primary:
+    - recall@fpr<=0.01
+    - escalation_rate        # = Gate-2 call/latency budget
+    - time_to_detect_seconds
+    - calibration_ece
+  report_only:
+    - f1                     # meaningful only on real-call (source-disjoint) held-out data. Synthetic-set-only figures are not a gate.

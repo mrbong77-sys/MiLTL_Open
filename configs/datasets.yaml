@@ -1,0 +1,119 @@
+# MiLTL dataset registry — single source of truth for directory layout, adapters, and modality
+#
+# Each dataset: root (under data/raw/normal) · adapter (ADAPTERS key) · modality · label · status · notes.
+# Generate streams with build_streams_real.py --source <adapter> --root "<root>" [--with-wave].
+# ⚠️ Raw data is never pushed (DGX-local, gitignored). Only this registry and the manifests go into git.
+# Status: ok=verified · schema?=json/structure needs checking · text-only=no audio.
+
+phishing:
+  fss:
+    root: "data/raw/fss"
+    adapter: fss            # text (transcript)
+    modality: text
+    label: phishing
+    status: ok
+  fss_audio:
+    root: "data/raw/fss"
+    adapter: fss_audio      # mp3/mp4 + transcript → dual
+    modality: dual
+    label: phishing
+    status: ok
+    notes: "voice(B206) 189post·179오디오 + voice2(B207) 227post·681오디오 = 416post·860오디오파일.
+            ⚠️ index 'text'는 게시글 본문(웹 크롬)이지 통화전사 아님 → **전 오디오 균일 ASR 필요**(docs/29).
+            harm 오디오 풍부(406통화) — dual 벤치 2:8 여유. (구값 '16/60' 정정.)"
+
+benign_dual:                # both text + waveform (for fusion & routing)
+  ksponspeech_dual:
+    root: "data/raw/normal/한국어 음성/평가용_데이터/KsponSpeech_eval"
+    adapter: ksponspeech_dual
+    modality: dual
+    label: benign
+    status: ok
+    notes: "pcm(16k) + .trn(상위 _scripts 자동탐색). 양모달 60/60. 낭독체(스타일 교락)."
+  # emotion_dialog (Sample 89) is smoke-test only — excluded from the bench inventory (avoids source conflict/duplication with full).
+  #   Smoke tests call the adapter directly: emotion_dialog_calls("data/raw/normal/감정이 태깅된 자유대화_Sample").
+  emotion_dialog_full:
+    root: "data/raw/normal/emotion_tagged"
+    adapter: emotion_dialog
+    modality: dual
+    label: benign
+    status: ok
+    notes: "★full 코퍼스(216GB). wav=TS 원천 zip, 전사 json=TL 라벨 zip — 둘 다 zip 내부(추출 없이
+            _wav_index/zip:URI + _iter_json_bytes). benign dual 대량(라벨 실내8306+실외1493, VS loose
+            1224 + TS zip wav). Conversation 없는 메타-json 자연배제. KorMMP safe-멀티모달 주공급원.
+            (구 emotion_dialog=Sample 89 를 대체하는 정식 벤치 소스.)"
+  sample_voice:
+    root: "data/raw/normal/Sample_voice"
+    adapter: sample_voice
+    modality: dual
+    label: benign
+    status: ok              # source/label parallel trees share the same stem; transcript = 발화정보.stt (noise tags cleaned)
+    notes: "New_Sample.zip 내부 원천데이터/wav + 라벨링데이터/json(발화정보.stt). zip: URI 디코드+stt 페어링."
+
+# ★Domain-matched hard negatives (for fair cross-corpus evaluation — formal business calls in phone register, in contrast to NIKL everyday chit-chat)
+benign_call_center:                # ★hard negatives (business calls, lexically similar to phishing) — KorMMP hardneg tier
+  ktelspeech:
+    root: "data/raw/normal/call_center/상담음성.zip"
+    adapter: callcenter           # concat per-session utterance .txt files (transcripts) → text
+    modality: text                # ★confirmed no audio (archives_with_audio = Sample_voice only). Text hard negatives.
+    label: benign
+    status: ok
+    notes: "세션 발화.txt(전사)만(wav 부재). KorMMP hardneg tier — 피싱-유사 업무통화 어휘로 emotion(diverse)
+            대비 하드 분포. build_callcenter_cases.py 로 GT→text_path 편입. call_id=callcenter_ktel:*."
+  minwon_callcenter:
+    root: "data/raw/normal/call_center/민원콜센터.zip"
+    adapter: callcenter           # json turn list → concat per 대화셋일련번호 (dialogue-set serial no.), ordered by 문장번호 (sentence no.)
+    modality: text                # json 200k turns, only 80 .m4a audio files (sparse) → currently a text hard negative
+    label: benign
+    status: ok
+    notes: "turn: 대화셋일련번호·고객질문(요청)·상담사답변. K쇼핑 상담. call_id=callcenter_minwon:*."
+
+benign_text:                # text only (diversifies the text-channel distribution)
+  freetalk:
+    root: "data/raw/normal/자유대화 음성(일반남녀)"
+    adapter: freetalk
+    modality: text
+    label: benign
+    status: ok              # [라벨] zips: 1 json = 1 utterance (발화정보.stt), grouped per session (parent folder)
+    notes: "[라벨]*.zip json(발화정보.stt, 오디오 없음, 원천 별도). 세션별 utts_per_call 묶음. 즉흥 대화체."
+  empathy_046:
+    root: "data/raw/normal/046.공감형 대화"
+    adapter: aihub_tsv
+    modality: text
+    label: benign
+    status: ok
+    notes: "tsv, split_keys.emotion(기쁨/당황/분노/불안/상처/슬픔). 텍스트 하드케이스(0.76)."
+  aihub_multisession:
+    root: "data/raw/normal/141.한국어 멀티세션 대화"
+    adapter: aihub
+    modality: text
+    label: benign
+    status: ok
+  aihub_persona:
+    root: "data/raw/normal/044.페르소나 대화"
+    adapter: aihub
+    modality: text
+    label: benign
+    status: ok
+  aihub_daily_011:
+    root: "data/raw/normal/011.일상대화 한국어 멀티세션 데이터"
+    adapter: aihub
+    modality: text
+    label: benign
+    status: ok
+  aihub_topic_020:
+    root: "data/raw/normal/020.주제별 텍스트 일상 대화 데이터"
+    adapter: aihub
+    modality: text
+    label: benign
+    status: ok
+  aihub_purpose_021:
+    root: "data/raw/normal/021.용도별 목적대화 데이터"
+    adapter: aihub
+    modality: text
+    label: benign
+    status: ok
+
+# Unclassified / pending review (manifest confirmed, no adapter assigned yet):
+#   297.SNS 데이터 고도화(json 3.2M) · 143.민원 언어AI · 한국어 대화 요약 · 08.한국어대화(xlsx)
+#   → decide on inclusion after schema check.

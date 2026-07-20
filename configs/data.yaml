@@ -1,0 +1,50 @@
+# Data sources / split policy (docs/DATA_ACCESS.md)
+# Core rule: FSS real voice is TEST-only, synthetic phishing is TRAIN-only — speaker/source/channel disjoint.
+
+sources:
+  fss_real:
+    role: test            # measures real-call generalization. Never used for training.
+    modality: [voice, text]
+    board: B0000206
+    menu_no: "200690"
+    list_url: "https://www.fss.or.kr/fss/bbs/B0000206/list.do"
+    out_dir: data/raw/fss
+    note: "DGX 로컬에서 fetch_fss_voicephishing.py 로 수집. raw는 git 비커밋."
+
+  normal_corpus_text:
+    role: train           # normal (benign) text — for large-scale training
+    modality: [text]
+    source: "AI-Hub 일상대화 한국어 멀티세션(dataSetSn=130). 텍스트·오디오 없음."
+    out_dir: data/raw/normal
+    tiling: word_proxy    # no audio → tile by segment_words (≈14 words ≈ 8 seconds)
+    note: "채팅형 register. 피싱(음성 녹취)과 도메인 갭 → 평가는 음성 benign 으로(아래)."
+
+  normal_corpus_voice:
+    role: [val, test]     # normal voice — for evaluation & domain correction (real-call register)
+    modality: [voice, text]
+    source: "AI-Hub 상담/자유대화 음성 등(별도 확보 필요). 실제 발화속도·prosody 확보."
+    out_dir: data/raw/normal_voice
+    note: "텍스트 benign 의 채널/register 갭 보정. FSS 피싱과 modality 정합."
+
+  synthetic_phishing:
+    role: train           # synthetic phishing (large scale)
+    modality: [text, voice]
+    source: "KorCCViD류 텍스트 → 한국어 다화자 TTS"
+    out_dir: data/raw/synthetic
+    note: "합성음 채널 누수 주의 — domain randomization / channel confound 측정."
+
+split:
+  strategy: disjoint
+  disjoint_keys: [speaker, source, channel]
+  test_holdout: fss_real   # all FSS real voice goes to test
+
+eval:
+  primary_metrics:
+    - partial_auc@fpr<=0.01
+    - recall@fpr=0.01
+    - latency_to_detect_seconds
+    - calibration_ece
+  edge_efficiency:
+    - ms_per_segment
+    - peak_ram_mb
+    - quantization   # INT8 / 4-bit

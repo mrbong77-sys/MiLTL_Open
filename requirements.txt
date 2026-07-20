@@ -1,0 +1,13 @@
+# MiLTL core dependencies.
+# - The nibble core (schema/tiler/featurize/gate1/simulate) is pure stdlib (zero deps).
+# - Only the FSS data collector and the waveform/prosody path need the packages below.
+requests>=2.31            # FSS collector (scripts/fetch_fss_voicephishing.py)
+beautifulsoup4>=4.12      # FSS collector
+tqdm>=4.66                # FSS collector
+numpy>=1.24               # prosody / waveform path + sequence Gate-1
+pyyaml>=6.0               # configs parsing (targets.yaml etc.)
+
+# GPU-backed baselines and Gate-2 SLM:
+#   pip install -r adapters/baselines/requirements.txt
+# ASR sidecar generation (transcripts from original audio):
+#   pip install -r requirements-asr.txt

@@ -1,0 +1,20 @@
+# Baseline reproduction dependencies (GPU machine recommended).
+# The core harness (miltl.baseline) is pure stdlib; these are only needed to run
+# the external baseline models and the Gate-2 SLM.
+#
+# Text encoders (B1 KoBERT / KLUE-RoBERTa)
+torch>=2.0
+transformers>=4.40
+sentencepiece>=0.1.99        # KoBERT tokenizer
+# NOTE: do not pin protobuf — modern transformers works with protobuf 5.x. If a legacy
+# KoBERT reproduction needs protobuf<4, isolate it in its own conda env.
+# B2 CNN-BiLSTM+FastText (optional — falls back to self-trained / whitespace tokens)
+# fasttext>=0.9.2            # if using pretrained cc.ko.300.bin
+# konlpy>=0.6                # MeCab morphological tokenization (original paper); whitespace fallback if absent
+# B6/B7 feature-tree baselines (CPU-light)
+catboost>=1.2
+lightgbm>=4.0
+# B3 LLM (Bllossom-8B reproduction) + Gate-2 SLM (Qwen2.5-1.5B LoRA)
+accelerate>=0.30            # device_map=auto
+peft>=0.10                  # LoRA adapters
+bitsandbytes>=0.43          # 4/8-bit quantized loading

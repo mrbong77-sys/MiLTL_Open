@@ -1,0 +1,609 @@
+{
+  "root": "data/raw/normal",
+  "total_files": 6438219,
+  "n_zip": 331,
+  "ext_counts": {
+    ".json": 6099522,
+    ".txt": 272388,
+    ".tsv": 58192,
+    ".pcm": 6000,
+    ".wav": 2090,
+    ".xlsx": 13,
+    ".trn": 12,
+    ".md": 1,
+    ".irx934": 1
+  },
+  "ext_bytes_human": {
+    ".json": "29GB",
+    ".txt": "9GB",
+    ".wav": "5GB",
+    ".pcm": "708MB",
+    ".trn": "264MB",
+    ".tsv": "207MB",
+    ".irx934": "25MB",
+    ".xlsx": "7MB",
+    ".md": "1KB"
+  },
+  "audio_files": 8090,
+  "audio_bytes_human": "5GB",
+  "audio_stats": {
+    "count": 8090,
+    "bytes_human": "5GB",
+    "by_ext": {
+      ".wav": 2090,
+      ".pcm": 6000
+    },
+    "pcm_assumption": "16000Hz/16bit/1ch",
+    "pcm_total_hours_est": 6.45,
+    "pcm_seconds_per_file": {
+      "n": 6000,
+      "median": 2.7,
+      "mean": 3.9,
+      "p90": 8.7,
+      "min": 0.3,
+      "max": 20.1
+    },
+    "wav_parsed": 2090,
+    "wav_sample_rates": {
+      "16000": 2090
+    },
+    "wav_channels": {
+      "1": 2000,
+      "2": 90
+    },
+    "wav_total_hours": 24.33,
+    "wav_seconds_per_file": {
+      "n": 2090,
+      "median": 6.7,
+      "mean": 41.9,
+      "p90": 9.8,
+      "min": 2.0,
+      "max": 1400.8
+    }
+  },
+  "timestamp_keys_detected": [
+    "sessionInfo.dialog.timestamp"
+  ],
+  "json_sampled": [
+    "011.일상대화 한국어 멀티세션 데이터/3.개방데이터/1.데이터/Training/02.라벨링데이터/TL_session2.zip!//DAILY-004341-AP600017-WZ000005-02_03_02-S2.json",
+    "011.일상대화 한국어 멀티세션 데이터/3.개방데이터/1.데이터/Training/02.라벨링데이터/TL_session2.zip!//DAILY-004344-AP600019-WZ000006-02_03_02-S2.json",
+    "011.일상대화 한국어 멀티세션 데이터/3.개방데이터/1.데이터/Training/02.라벨링데이터/TL_session2.zip!//DAILY-003830-AP600008-WZ000006-02_03_02-S2.json"
+  ],
+  "txt_sampled": [],
+  "xlsx_schemas": [
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/B 의류(15,826)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:S15827",
+      "n_shared_strings": 28597,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스",
+        ""
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/C 학원(4,773)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:T4774",
+      "n_shared_strings": 8483,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스",
+        "",
+        ""
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/D 소매점(14,949)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:S14950",
+      "n_shared_strings": 29366,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스",
+        ""
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/E 생활서비스(11,087)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:S11088",
+      "n_shared_strings": 20625,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스",
+        ""
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/F 카페(7,859)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:R7860",
+      "n_shared_strings": 14099,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스"
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/G 숙박업(7,113)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:S7114",
+      "n_shared_strings": 12538,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스",
+        ""
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/H 관광여가오락(4,949)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:S4950",
+      "n_shared_strings": 8587,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스",
+        ""
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/I 부동산(8,131)_new.xlsx",
+      "sheets": [
+        "Sheet1"
+      ],
+      "dimension": "A1:R8132",
+      "n_shared_strings": 15541,
+      "header": [
+        "SPEAKER",
+        "SENTENCE",
+        "DOMAINID",
+        "DOMAIN",
+        "CATEGORY",
+        "SPEAKERID",
+        "SENTENCEID",
+        "MAIN",
+        "SUB",
+        "QA",
+        "QACNCT",
+        "MQ",
+        "SQ",
+        "UA",
+        "SA",
+        "개체명",
+        "용어사전",
+        "지식베이스"
+      ]
+    },
+    {
+      "source": "08.한국어대화/01_dialog/한국어대화_new_260226.zip!/j 교통_최종본(250814).xlsx",
+      "sheets": [
+        "sheet1"
+      ],
+      "dimension": "A1:K668",
+      "n_shared_strings": 3444,
+      "header": [
+        "도메인",
+        "화자",
+        "intent",
+        "subintent",
+        "question",
+        "비식별 데이터",
+        "q_entity",
+        "a_entity",
+        "용어사전",
+        "지식베이스",
+        ""
+      ]
+    }
+  ],
+  "tsv_schemas": [
+    {
+      "source": "044.페르소나 대화/01-1.정식개방데이터/Training/01.원천데이터/TS_가족.zip!//Personas_가족_1000.tsv",
+      "delimiter": "tab",
+      "n_cols": 8,
+      "columns": [
+        "id",
+        "utterance_id",
+        "text",
+        "bp_persona_info_id",
+        "bp_persona_profile_id",
+        "terminate",
+        "regDate",
+        "updDate"
+      ],
+      "utt_col": "utterance_id",
+      "n_rows": 20
+    }
+  ],
+  "tsv_stats": {
+    "tsv_scanned": 300,
+    "words_per_utterance": {
+      "n": 900,
+      "median": 1,
+      "mean": 1.0,
+      "p90": 1,
+      "min": 1,
+      "max": 1
+    },
+    "syllables_per_utterance": {
+      "n": 900,
+      "median": 0,
+      "mean": 0.0,
+      "p90": 0,
+      "min": 0,
+      "max": 0
+    }
+  },
+  "dialog_stats": {
+    "json_scanned": 300,
+    "words_per_utterance": {
+      "n": 8525,
+      "median": 8,
+      "mean": 9.4,
+      "p90": 16,
+      "min": 2,
+      "max": 84
+    },
+    "syllables_per_utterance": {
+      "n": 8525,
+      "median": 23,
+      "mean": 28.1,
+      "p90": 48,
+      "min": 6,
+      "max": 278
+    },
+    "utterances_per_session(parsed)": {
+      "n": 300,
+      "median": 28,
+      "mean": 28.4,
+      "p90": 30,
+      "min": 28,
+      "max": 34
+    },
+    "numberOfTurns_per_session(meta)": {
+      "n": 599,
+      "median": 7,
+      "mean": 7.1,
+      "p90": 7,
+      "min": 7,
+      "max": 9
+    },
+    "n_timed_utterances": 0,
+    "utterance_seconds(json_ts)": null,
+    "syllables_per_sec(json_ts)": null
+  },
+  "txt_stats": {
+    "txt_scanned": 300,
+    "lines_per_file": {
+      "n": 300,
+      "median": 1115,
+      "mean": 1474.8,
+      "p90": 2615,
+      "min": 732,
+      "max": 10127
+    },
+    "words_per_line": {
+      "n": 442452,
+      "median": 2,
+      "mean": 5.1,
+      "p90": 14,
+      "min": 1,
+      "max": 5887
+    },
+    "syllables_per_line": {
+      "n": 442452,
+      "median": 0,
+      "mean": 12.1,
+      "p90": 41,
+      "min": 0,
+      "max": 17057
+    }
+  },
+  "by_corpus": {
+    "297.SNS 데이터 고도화": {
+      "files": 3225189,
+      "bytes_human": "14GB",
+      "audio": 0,
+      "n_zip": 2,
+      "ext": {
+        ".json": 3225189
+      }
+    },
+    "자유대화 음성(일반남녀)": {
+      "files": 2542359,
+      "bytes_human": "2GB",
+      "audio": 0,
+      "n_zip": 6,
+      "ext": {
+        ".json": 2542359
+      }
+    },
+    "020.주제별 텍스트 일상 대화 데이터": {
+      "files": 197304,
+      "bytes_human": "1GB",
+      "audio": 0,
+      "n_zip": 26,
+      "ext": {
+        ".json": 98652,
+        ".txt": 98652
+      }
+    },
+    "141.한국어 멀티세션 대화": {
+      "files": 152000,
+      "bytes_human": "3GB",
+      "audio": 0,
+      "n_zip": 12,
+      "ext": {
+        ".txt": 76000,
+        ".json": 76000
+      }
+    },
+    "011.일상대화 한국어 멀티세션 데이터": {
+      "files": 110710,
+      "bytes_human": "15GB",
+      "audio": 0,
+      "n_zip": 12,
+      "ext": {
+        ".txt": 55355,
+        ".json": 55355
+      }
+    },
+    "021.용도별 목적대화 데이터": {
+      "files": 84762,
+      "bytes_human": "386MB",
+      "audio": 0,
+      "n_zip": 16,
+      "ext": {
+        ".json": 42381,
+        ".txt": 42381
+      }
+    },
+    "046.공감형 대화": {
+      "files": 58062,
+      "bytes_human": "309MB",
+      "audio": 0,
+      "n_zip": 168,
+      "ext": {
+        ".tsv": 29424,
+        ".json": 28638
+      }
+    },
+    "044.페르소나 대화": {
+      "files": 57536,
+      "bytes_human": "402MB",
+      "audio": 0,
+      "n_zip": 80,
+      "ext": {
+        ".tsv": 28768,
+        ".json": 28768
+      }
+    },
+    "한국어 음성": {
+      "files": 6013,
+      "bytes_human": "997MB",
+      "audio": 6000,
+      "n_zip": 1,
+      "ext": {
+        ".pcm": 6000,
+        ".trn": 12,
+        ".irx934": 1
+      }
+    },
+    "Sample_voice": {
+      "files": 4000,
+      "bytes_human": "427MB",
+      "audio": 2000,
+      "n_zip": 1,
+      "ext": {
+        ".json": 2000,
+        ".wav": 2000
+      }
+    },
+    "감정이 태깅된 자유대화_Sample": {
+      "files": 180,
+      "bytes_human": "4GB",
+      "audio": 90,
+      "n_zip": 0,
+      "ext": {
+        ".wav": 90,
+        ".json": 90
+      }
+    },
+    "143.민원 업무 효율, 자동화를 위한 언어 AI 학습데이터": {
+      "files": 72,
+      "bytes_human": "1GB",
+      "audio": 0,
+      "n_zip": 4,
+      "ext": {
+        ".json": 72
+      }
+    },
+    "한국어 대화 요약": {
+      "files": 18,
+      "bytes_human": "1GB",
+      "audio": 0,
+      "n_zip": 2,
+      "ext": {
+        ".json": 18
+      }
+    },
+    "08.한국어대화": {
+      "files": 13,
+      "bytes_human": "7MB",
+      "audio": 0,
+      "n_zip": 1,
+      "ext": {
+        ".xlsx": 13
+      }
+    },
+    "README.md": {
+      "files": 1,
+      "bytes_human": "1KB",
+      "audio": 0,
+      "n_zip": 0,
+      "ext": {
+        ".md": 1
+      }
+    }
+  },
+  "top_dirs": {
+    "297.SNS 데이터 고도화/01-1.정식개방데이터": 3225189,
+    "자유대화 음성(일반남녀)/Training": 2278984,
+    "자유대화 음성(일반남녀)/Validation": 263375,
+    "020.주제별 텍스트 일상 대화 데이터/01.데이터": 197304,
+    "141.한국어 멀티세션 대화/01-1.정식개방데이터": 152000,
+    "011.일상대화 한국어 멀티세션 데이터/3.개방데이터": 110710,
+    "021.용도별 목적대화 데이터/01.데이터": 84762,
+    "046.공감형 대화/01-1.정식개방데이터": 58062,
+    "044.페르소나 대화/01-1.정식개방데이터": 57536,
+    "한국어 음성/평가용_데이터": 6000,
+    "Sample_voice/New_Sample.zip": 4000,
+    "감정이 태깅된 자유대화_Sample/Sample": 180,
+    "143.민원 업무 효율, 자동화를 위한 언어 AI 학습데이터/01.데이터": 72,
+    "08.한국어대화/01_dialog": 13,
+    "한국어 대화 요약/Training": 9,
+    "한국어 대화 요약/Validation": 9,
+    "한국어 음성/전시문_통합_스크립트": 8,
+    "한국어 음성/_scripts": 4,
+    "README.md": 1,
+    "한국어 음성/한국어_음성_분야": 1
+  },
+  "charts": [
+    "filetypes.svg",
+    "by_corpus.svg",
+    "by_corpus_bytes.svg",
+    "register.svg",
+    "speech_rate.svg"
+  ],
+  "archives_with_audio": [
+    "Sample_voice/New_Sample.zip"
+  ]
+}

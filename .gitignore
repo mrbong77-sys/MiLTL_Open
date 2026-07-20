@@ -1,0 +1,57 @@
+# =====================================================================
+# Data governance
+#   - Never commit audio/video files: obtain FSS / AI-Hub source audio
+#     from the original providers (see docs/DATA_ACCESS.md).
+#   - Never commit AI-Hub-derived transcripts (license prohibits
+#     redistribution). Pointer manifests + rebuild scripts are tracked.
+#   - Model weights are distributed via Hugging Face Hub releases
+#     (scripts/download_models.sh), not git.
+# =====================================================================
+
+# audio / video
+*.mp3
+*.mp4
+*.wav
+*.m4a
+*.ogg
+*.aac
+*.wma
+*.webm
+*.opus
+*.flac
+*.pcm
+
+# model weights — large files are distributed via GitHub Releases (see docs/MODELS.md)
+*.pt
+*.pth
+*.onnx
+*.bin
+*.safetensors
+# --- exception: the SMALL canonical MiLTL checkpoints are committed directly to git ---
+#     (keep each < 100 MB — GitHub's hard per-file limit for non-LFS; large frozen
+#      legacy weights stay out and go to a Release. See docs/MODELS.md.)
+!artifacts/models/channel_extractors.pt
+!artifacts/models/miltl_head.pt
+!artifacts/models/gate2_adapter_1.5b/
+!artifacts/models/gate2_adapter_1.5b/adapter_model.safetensors
+!artifacts/models/gate2_adapter_1.5b/adapter_model.bin
+
+# raw corpora (rebuild locally per docs/DATA_ACCESS.md)
+data/raw/normal/
+data/source/
+artifacts/asr/
+artifacts/gt_text/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.ipynb_checkpoints/
+
+# OS/IDE
+.DS_Store
+.idea/
+.vscode/

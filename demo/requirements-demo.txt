@@ -1,0 +1,25 @@
+# MiLTL standalone demo — minimal dependencies (no GPU anywhere).
+#
+# L1 (Gate-1) needs ONLY numpy: the canonical scorer is the deterministic analytic
+# rule over calibrated channels — no torch, no model download.
+numpy>=1.24
+
+# Audio upload: .wav decodes with the Python stdlib (no extra dep). Compressed formats
+# (.mp3/.mp4/.m4a/.ogg/.flac) need ffmpeg — imageio-ffmpeg ships a static ffmpeg binary via
+# pip (Windows/macOS/Linux), so uploads work out of the box with NO system install.
+imageio-ffmpeg>=0.4
+
+# Optional — legacy reference panel row "tree ensemble" (frozen KorCCViD CatBoost):
+#   pip install catboost
+# catboost>=1.2
+
+# Optional — wave-only auto-transcription (ASR) for uploaded audio without a transcript:
+#   pip install faster-whisper
+# faster-whisper>=1.0
+
+# Optional — Gate-2 (L2) panel: the repo's real Gate2SLM on CPU (fp32).
+# Uncomment (or install the CPU wheel explicitly) to enable the L2 buttons:
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch
+#   pip install transformers
+# torch>=2.0
+# transformers>=4.40

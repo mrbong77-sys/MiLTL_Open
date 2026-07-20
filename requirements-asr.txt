@@ -1,0 +1,5 @@
+# ASR sidecar generation (scripts/asr_transcribe.py) — used to regenerate transcripts
+# from the original FSS / AI-Hub audio on a GPU machine.
+# Recommended (GPU/speed): faster-whisper. Fallback: openai-whisper.
+faster-whisper>=1.0.0
+# openai-whisper>=20231117   # fallback (pick one). Force with ASR_BACKEND=whisper.

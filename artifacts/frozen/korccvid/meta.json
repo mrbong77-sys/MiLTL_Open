@@ -1,0 +1,14 @@
+{
+ "corpus": "korccvid",
+ "data": "artifacts/baseline/bench_T0.jsonl",
+ "test_frac": 0.3,
+ "split_seed": 20260705,
+ "n_train": 2048,
+ "n_test": 879,
+ "test_harm": 210,
+ "saved_detectors": [
+  "hf_encoder",
+  "cnn_bilstm",
+  "tree"
+ ]
+}

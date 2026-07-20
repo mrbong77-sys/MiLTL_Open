@@ -1,0 +1,17 @@
+﻿corpus,group,model,n,AUROC,sig,F1,ACC,SEN,SPE,PPV,NPV,p_vs_ref
+KorCCViD,Legacy ML/encoder (text),hf(frozen),500,1.0,*,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+KorCCViD,Legacy ML/encoder (text),cnn_bilstm(frozen),500,1.0,*,0.997,0.998,0.995,1.0,1.0,0.997,0.0
+KorCCViD,Legacy ML/encoder (text),tree(frozen),500,1.0,*,1.0,1.0,1.0,1.0,1.0,1.0,0.0
+KorCCViD,Legacy ML/encoder (text),lexical(text-proxy),500,0.502,*,0.353,0.67,0.225,0.967,0.818,0.652,0.0
+KorCCViD,Legacy LLM (text),Bllossom-B3(public-finetuned),500,0.883,,0.834,0.876,0.78,0.94,0.897,0.865,0.7627
+KorCCViD,MiLTL (proposed),MiLTL-Cascade,500,0.89,,0.881,0.912,0.815,0.977,0.959,0.888,
+KorCCViD,MiLTL (proposed),MiLTL-L1(ablation),500,0.866,*,0.805,0.84,0.825,0.85,0.786,0.879,0.0077
+KorMMP,Legacy ML/encoder (text),cnn_bilstm(frozen),500,0.658,*,0.677,0.632,0.965,0.41,0.522,0.946,0.0
+KorMMP,Legacy ML/encoder (text),hf(frozen),500,0.641,*,0.701,0.658,1.0,0.43,0.539,1.0,0.0
+KorMMP,Legacy ML/encoder (text),tree(frozen),500,0.638,*,0.52,0.62,0.515,0.69,0.526,0.681,0.0
+KorMMP,Legacy ML/encoder (text),lexical(text-proxy),500,0.407,*,0.383,0.684,0.245,0.977,0.875,0.66,0.0
+KorMMP,Legacy LLM (text),Bllossom-B3(public-finetuned),500,0.684,*,0.624,0.72,0.58,0.813,0.674,0.744,0.0
+KorMMP,Audio-only,Wave-Seq(audio-only),500,0.508,*,0.576,0.41,1.0,0.017,0.404,1.0,0.0
+KorMMP,Naive fusion (multimodal),MiLTL-Dual(naive-fusion text+wave),500,0.561,*,0.547,0.602,0.6,0.603,0.502,0.693,0.0
+KorMMP,MiLTL (proposed),MiLTL-Cascade,500,0.965,,0.939,0.95,0.955,0.947,0.923,0.969,
+KorMMP,MiLTL (proposed),MiLTL-L1(ablation),500,0.933,*,0.84,0.872,0.84,0.893,0.84,0.893,0.0005
